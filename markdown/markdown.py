@@ -5,6 +5,25 @@ import glob
 import os
 import re
 
+## Markdown rules
+## 1. At any time the state is "sv" or "non-sv"
+## 2. Initial state is non-sv 
+## 3. At any time the substate is "md" or "non-md"
+## 4. Initial substate is "non-md"
+## 5. State changes from non-sv to sv with //s_sv block
+## 6. State chages from sv to non-sv with //e_sv block
+## 7. Final state must be non-sv
+## 8. Substate can be changed to md with /*s_md block
+## 9. Substate can be changed to non-md with e_md*/ block
+## 10. No text is allowed in the /*s_md and e_md*/ pragmas
+## 11. Text in md substate is printed as Markdown
+## 12. Text in non-sv state and non-markdown state is ignored
+##     This can be used for removing file headers
+## 13. Text in sv state and non-markdown state is
+##     printed as SystemVerilog code
+## 14. //md <Text> is a single line markdown and the <Text>
+##     is printed as markdown
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('-if', '--file', help='Input file')
