@@ -49,20 +49,34 @@ def markdown(ifile, ofile):
             md_re = re.match("[^\s\t]*e_md\*/", line)
             if md_re:
                 in_md = False
+                if in_sv:
+                    ofh.write("```sv\n")
             else:
                 ofh.write(line)
         elif in_sv:
+            md0_re = re.match("[^\s\t]*/\*s_md", line)
+            md1_re = re.match("[^\s\t]*//md (.*)", line)
             sv_re = re.match("[^\s\t]*//e_sv", line)
-            if sv_re:
+            if md0_re:
+                in_md = True
+                ofh.write("```\n")
+            elif md1_re:
+                ofh.write("```\n")
+                ofh.write(md1_re.groups()[0] + "\n")
+                ofh.write("```sv\n")
+            elif sv_re:
                 in_sv = False
                 ofh.write("```\n")
             else:
                 ofh.write(line)
         else:
-            md_re = re.match("[^\s\t]*/\*s_md", line)
+            md0_re = re.match("[^\s\t]*/\*s_md", line)
+            md1_re = re.match("[^\s\t]*//md (.*)", line)
             sv_re = re.match("[^\s\t]*//s_sv", line)
-            if md_re:
+            if md0_re:
                 in_md = True
+            elif md1_re:
+                ofh.write(md1_re.groups()[0])
             elif sv_re:
                 in_sv = True
                 ofh.write("```sv\n")
