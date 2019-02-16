@@ -7,15 +7,15 @@ import re
 
 ## Markdown rules
 ## 1. At any time the state is "sv" or "non-sv"
-## 2. Initial state is non-sv 
+## 2. Initial state is non-sv
 ## 3. At any time the substate is "md" or "non-md"
 ## 4. Initial substate is "non-md"
-## 5. State changes from non-sv to sv with //s_sv block
-## 6. State chages from sv to non-sv with //e_sv block
+## 5. State changes from non-sv to sv with //sv+ block
+## 6. State chages from sv to non-sv with //sv- block
 ## 7. Final state must be non-sv
-## 8. Substate can be changed to md with /*s_md block
-## 9. Substate can be changed to non-md with e_md*/ block
-## 10. No text is allowed in the /*s_md and e_md*/ pragmas
+## 8. Substate can be changed to md with /*md block
+## 9. Substate can be changed to non-md with */ block
+## 10. No text is allowed in the /*md and */ lines
 ## 11. Text in md substate is printed as Markdown
 ## 12. Text in non-sv state and non-markdown state is ignored
 ##     This can be used for removing file headers
@@ -65,7 +65,7 @@ def markdown(ifile, ofile):
     in_sv = False
     for line in ifh:
         if in_md:
-            md_re = re.match("[^\s\t]*e_md\*/", line)
+            md_re = re.match("^[\s\t]*\*/", line)
             if md_re:
                 in_md = False
                 if in_sv:
@@ -73,9 +73,9 @@ def markdown(ifile, ofile):
             else:
                 ofh.write(line)
         elif in_sv:
-            md0_re = re.match("[^\s\t]*/\*s_md", line)
-            md1_re = re.match("[^\s\t]*//md (.*)", line)
-            sv_re = re.match("[^\s\t]*//e_sv", line)
+            md0_re = re.match("^[\s\t]*/\*md", line)
+            md1_re = re.match("^[\s\t]*//md (.*)", line)
+            sv_re = re.match("^[\s\t]*//sv-", line)
             if md0_re:
                 in_md = True
                 ofh.write("```\n")
@@ -89,20 +89,17 @@ def markdown(ifile, ofile):
             else:
                 ofh.write(line)
         else:
-            md0_re = re.match("[^\s\t]*/\*s_md", line)
-            md1_re = re.match("[^\s\t]*//md (.*)", line)
-            sv_re = re.match("[^\s\t]*//s_sv", line)
+            md0_re = re.match("^[\s\t]*/\*md", line)
+            md1_re = re.match("^[\s\t]*//md (.*)", line)
+            not_empty = line.strip();
+            sv_re = re.match("^[\s\t]*//sv+", line)
             if md0_re:
                 in_md = True
             elif md1_re:
-                ofh.write(md1_re.groups()[0])
+                ofh.write(md1_re.groups()[0] + "\n")
             elif sv_re:
                 in_sv = True
                 ofh.write("```sv\n")
-            else:
-                md_re = re.match("^[\s\t]*//md (.*)", line)
-                if md_re:
-                    ofh.write(md_re.groups()[0])
     ifh.close()
     ofh.close()
 
