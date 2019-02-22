@@ -8,7 +8,7 @@ Comments need to be written in Markdown language of Github. The
 syntax fits the pattern of regular comments so the comments can
 be effective viewed in the source or the markdown.
 
-# Rule for writing markdown in SystemVerilog code
+# Rules for writing markdown in SystemVerilog code
 When parsing a SystemVerilog file there is a concept of a main
 state and substate. 
 
