@@ -1,7 +1,7 @@
 # Introduction
 This script generates markdown files from SystemVerilog code.
 The comments in the SystemVerilog code get converted to markdown
-and SystemVerilog code is put in (```sv, ```) block and is treated
+and SystemVerilog code is put in (\`\`\`sv, \`\`\`) block and is treated
 as SystemVerilog code.
 
 Comments need to be written in Markdown language of Github. The
